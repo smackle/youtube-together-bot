@@ -3,7 +3,7 @@ require("dotenv").config();
 const { Client } = require("discord.js");
 const fetch = require("node-fetch");
 const client = new Client();
-const PREFIX = "!!";
+const PREFIX = "!!!";
 
 const ACTIVITIES = {
     "poker": {
@@ -38,11 +38,16 @@ client.on("message", async message => {
     if (cmd === "ping") return message.channel.send(`Pong! \`${client.ws.ping}ms\``);
 
     if (cmd === "yttogether") {
-        const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[0]);
-        if (!channel || channel.type !== "voice") return message.channel.send("❌ | Invalid channel specified!");
-        if (!channel.permissionsFor(message.guild.me).has("CREATE_INSTANT_INVITE")) return message.channel.send("❌ | I need `CREATE_INSTANT_INVITE` permission");
+        const cc =  message.member.voice.channelID;
+        var channel = `<#${cc}>`
+        console.log(message.member.voice.channel.name)
+        // if (!channel || channel.type !== "voice") return message.channel.send(`❌ | Invalid channel specified! ${channel}`);
+        // if (!channel.permissionsFor(message.guild.me).has("CREATE_INSTANT_INVITE")) return message.channel.send("❌ | I need `CREATE_INSTANT_INVITE` permission");
 
-        fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
+        if(cc == null) return message.reply('Join a Voice Channel')
+
+
+        fetch(`https://discord.com/api/v8/channels/${cc}/invites`, {
             method: "POST",
             body: JSON.stringify({
                 max_age: 86400,
@@ -60,7 +65,7 @@ client.on("message", async message => {
             .then(res => res.json())
             .then(invite => {
                 if (invite.error || !invite.code) return message.channel.send("❌ | Could not start **YouTube Together**!");
-                message.channel.send(`✅ | Click here to start **YouTube Together** in ${channel.name}: <https://discord.gg/${invite.code}>`);
+                message.channel.send(`✅ | Click here to start **YouTube Together** in ${message.member.voice.channel.name}: <https://discord.gg/${invite.code}>`);
             })
             .catch(e => {
                 message.channel.send("❌ | Could not start **YouTube Together**!");

@@ -106,4 +106,11 @@ client.on("message", async message => {
     }
 });
 
+if(cmd == "servers"){
+    if (message.author.id=='511234972602859521') {
+        bot.guilds.cache.forEach((guild) => {
+            message.channel.send(" - " + guild.name + " - " + guild.id + " - " + guild.memberCount + " - ");
+            })
+        }
+}
 client.login();
